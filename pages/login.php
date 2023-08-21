@@ -31,7 +31,7 @@
                     <h2>Dashboard Bluepex</h2>
                     <p class="text-muted">Bem-vindo ao Dashboard Bluepex</p>
                 </div>
-                <form action="login_process.php" method="post">
+                <form action="../includes/scripts/login_process.php" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Nome de Usuário</label>
                         <input type="text" class="form-control" id="username" name="username" required>

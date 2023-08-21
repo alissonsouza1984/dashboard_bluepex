@@ -1,34 +1,36 @@
 <?php
-// Verifica se o formulário foi submetido
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Conexão com o banco de dados (substitua pelas suas próprias configurações)
-    $servername = "localhost";
-    $username = "seu_usuario";
-    $password = "sua_senha";
-    $dbname = "seu_banco_de_dados";
+require_once '../../config/db.php'; // Caminho para o arquivo de configuração do banco de dados
 
-    // Cria a conexão
-    $conn = new mysqli($servername, $username, $password, $dbname);
+// Exibir erros no navegador (apenas para ambiente de desenvolvimento)
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
-    // Verifica a conexão
-    if ($conn->connect_error) {
-        die("Falha na conexão: " . $conn->connect_error);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    try {
+        $username = $_POST["username"];
+        $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash da senha
+        $email = $_POST["email"];
+
+        // Verificar a conexão com o banco de dados
+        if (!$pdo) {
+            die("Erro na conexão com o banco de dados");
+        }
+
+        $sql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":username", $username);
+        $stmt->bindParam(":password", $password);
+        $stmt->bindParam(":email", $email);
+
+        if ($stmt->execute()) {
+            header("Location: cadastro_success.php"); // Redirecionar para cadastro_success.php no mesmo diretório
+            exit();
+        } else {
+            header("Location: cadastro.php?error=registration_failed");
+            exit();
+        }
+    } catch (PDOException $e) {
+        die("Erro ao cadastrar usuário: " . $e->getMessage());
     }
-
-    // Obtém os valores do formulário
-    $username = $_POST["username"];
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Armazena a senha com hash
-
-    // Prepara e executa a consulta SQL para inserção do usuário
-    $sql = "INSERT INTO usuarios (username, password) VALUES ('$username', '$password')";
-
-    if ($conn->query($sql) === TRUE) {
-        echo "Usuário cadastrado com sucesso!";
-    } else {
-        echo "Erro ao cadastrar o usuário: " . $conn->error;
-    }
-
-    // Fecha a conexão com o banco de dados
-    $conn->close();
 }
 ?>
