@@ -25,3 +25,7 @@ CREATE TABLE sessions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+#definir usuario admin no banco de dados
+INSERT INTO users (username, password, is_admin, email) VALUES ('admin', '$2y$10$8aHHdVZvppjNYWV80MIwu.BiFGjQ1J5N7OB5LZw3Cy.KKTPOtFFuO', 1, 'admin@example.com');
