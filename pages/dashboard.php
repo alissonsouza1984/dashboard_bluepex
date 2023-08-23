@@ -51,6 +51,20 @@
         .dashboard-table th {
             font-weight: bold;
         }
+        .user-list-container {
+            text-align: left;
+            margin-top: 20px;
+        }
+        #userList {
+            list-style: none;
+            padding: 0;
+        }
+        #toggleUserList {
+            margin-top: 10px;
+        }
+        .logout-button {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -95,7 +109,7 @@
 
         // Obter status da memória utilizada
         $memory_usage = shell_exec("free -m | grep Mem | awk '{print $3/$2 * 100.0}'");
-        $memory_usage = trim($memory_usage); // Remover espaços em branco
+        $memory_usage = number_format(trim($memory_usage), 2); // Remover espaços em branco e formatar como porcentagem
 
         // Obter status de uso dos discos
         $disk_usage = shell_exec("df -h | grep '/dev/sd' | awk '{print $5}'");
@@ -139,34 +153,111 @@
                 </tr>
             </table>
         </div>
+        <!-- ... (código anterior) ... -->
+        <!-- ... (código anterior) ... -->
+        <div class="user-list-container">
+            <h4>Listagem de Usuários</h4>
+            <button id="toggleUserList" class="btn btn-primary">Mostrar Usuários Cadastrados</button>
+            <div id="userList" style="display: none;">
+                <ul class="list-group">
+                    <?php
+                    $sql = "SELECT id, username FROM users";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute();
+                    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if ($users) {
+                        foreach ($users as $user) {
+                            echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                            echo '<span>' . $user['username'] . '</span>';
+                            echo '<div>';
+                            echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $user['id'] . '">              Editar  </button>';
+                            echo '<button class="btn btn-sm btn-outline-danger delete-button" data-id="' . $user['id'] . '">            Deletar </button>';
+                            echo '</div>';
+                            echo '</li>';
+                        }
+                    } else {
+                        echo '<li class="list-group-item">Nenhum usuário encontrado.</li>';
+                    }
+                    ?>
+                </ul>
+                <html>
+                            <div class="dashboard-logout d-flex justify-content-between">
+                            <a href="register_user.php" class="btn btn-success register-button">Cadastrar Novo Usuário</a>
+                            </div>
+                            </html>
+            </div>
+        </div>
         <div class="dashboard-logout">
-            <a href="logout.php" class="btn btn-primary">Sair</a>
+            <a href="logout.php" class="btn btn-primary logout-button">Sair</a>
         </div>
     </div>
+   <script>
+    // Função para atualizar a utilização da CPU, memória e discos a cada 5 segundos
+    function updateResourceUsage(endpoint, targetId) {
+        fetch(endpoint)
+            .then(response => response.text())
+            .then(data => {
+                // Adicionar símbolo ' %' aos valores de porcentagem
+                if (targetId === 'cpuUsage' || targetId === 'memoryUsage' || targetId === 'diskUsage') {
+                    data = data + ' %';
+                }
+                document.getElementById(targetId).textContent = data;
+            })
+            .catch(error => {
+                console.error('Erro ao obter informações:', error);
+            });
+    }
+    function updateAllUsage() {
+        updateResourceUsage('../includes/scripts/cpu_usage.php', 'cpuUsage');
+        updateResourceUsage('../includes/scripts/memory_usage.php', 'memoryUsage');
+        updateResourceUsage('../includes/scripts/disk_usage.php', 'diskUsage');
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Função para atualizar a utilização da CPU, memória e discos a cada 5 segundos
-        function updateResourceUsage(endpoint, targetId) {
-            fetch(endpoint)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(targetId).textContent = data;
-                })
-                .catch(error => {
-                    console.error('Erro ao obter informações:', error);
-                });
+    // Inicializa a atualização de recursos
+    updateAllUsage();
+    setInterval(updateAllUsage, 500); // Atualiza a cada 5 segundos
+
+    // Adiciona o comportamento para mostrar/ocultar a lista de usuários
+    document.getElementById("toggleUserList").addEventListener("click", function() {
+        var userList = document.getElementById("userList");
+        if (userList.style.display === "none") {
+            userList.style.display = "block";
+            this.textContent = "Esconder Usuários Cadastrados";
+        } else {
+            userList.style.display = "none";
+            this.textContent = "Mostrar Usuários Cadastrados ";
         }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll(".edit-button");
+        const deleteButtons = document.querySelectorAll(".delete-button");
 
-        function updateAllUsage() {
-            updateResourceUsage('../includes/scripts/cpu_usage.php', 'cpuUsage');
-            updateResourceUsage('../includes/scripts/memory_usage.php', 'memoryUsage');
-            updateResourceUsage('../includes/scripts/disk_usage.php', 'diskUsage');
-        }
+        editButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const userId = this.getAttribute("data-id");
+                // Redirecione para a página de edição, passando o ID do usuário
+                window.location.href = "edit_user.php?id=" + userId;
+            });
+        });
 
-        // Inicializa a atualização de recursos
-        updateAllUsage();
-        setInterval(updateAllUsage, 500); // Atualiza a cada 5 segundos
-    </script>
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const userId = this.getAttribute("data-id");
+                if (confirm("Tem certeza que deseja deletar este usuário?")) {
+                    // Faça uma requisição AJAX para o script de deleção
+                    fetch("delete_user.php?id=" + userId, {
+                        method: "POST"
+                    }).then(response => {
+                        // Recarregue a página após a deleção
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    });
+</script>
 </body>
-</html>
+</html
