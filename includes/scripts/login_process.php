@@ -20,8 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header("Location: ../../pages/dashboard.php");
         exit();
     } else {
-        header("Location: ../../pages/login.php?error=login_failed");
+        header("Location: ../../pages/login.php?error=invalid_credentials");
         exit();
     }
 }
 ?>
+

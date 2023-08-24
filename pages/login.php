@@ -42,6 +42,11 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>
+                <?php
+                if (isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
+                    echo '<div class="alert alert-danger mt-3">Nome de usuário ou senha inválidos.</div>';
+                }
+                ?>
                 <div class="mt-3 text-center">
                     <a href="cadastro.php">Cadastrar Usuário Novo</a> | <a href="#">Esqueceu a Senha</a>
                 </div>
