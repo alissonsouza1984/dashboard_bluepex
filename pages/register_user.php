@@ -15,26 +15,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($checkUsernameStmt->rowCount() > 0) {
         $_SESSION['registration_error'] = "O nome de usuário já está em uso.";
-        header("Location: dashboard.php");
-        exit();
-    }
-
-    // Inserir o novo usuário no banco de dados
-    $insertSql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
-    $insertStmt = $pdo->prepare($insertSql);
-    $insertStmt->bindParam(":username", $username);
-    $insertStmt->bindParam(":password", $password);
-    $insertStmt->bindParam(":email", $email);
-
-    if ($insertStmt->execute()) {
-        $_SESSION['registration_success'] = "Usuário cadastrado com sucesso!";
-        header("Location: dashboard.php");
-        exit();
     } else {
-        $_SESSION['registration_error'] = "Erro ao cadastrar o usuário. Por favor, tente novamente mais tarde.";
-        header("Location: dashboard.php");
-        exit();
+        // Inserir o novo usuário no banco de dados
+        $insertSql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
+        $insertStmt = $pdo->prepare($insertSql);
+        $insertStmt->bindParam(":username", $username);
+        $insertStmt->bindParam(":password", $password);
+        $insertStmt->bindParam(":email", $email);
+
+        if ($insertStmt->execute()) {
+            $_SESSION['registration_success'] = "Usuário cadastrado com sucesso!";
+        } else {
+            $_SESSION['registration_error'] = "Erro ao cadastrar o usuário. Por favor, tente novamente mais tarde.";
+        }
     }
+
+    // Redirecionar de volta à página de cadastro
+    header("Location: register_user.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -53,6 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             echo '<div class="alert alert-danger" role="alert">' . $_SESSION['registration_error'] . '</div>';
             unset($_SESSION['registration_error']);
         }
+        if (isset($_SESSION['registration_success'])) {
+            echo '<div class="alert alert-success" role="alert">' . $_SESSION['registration_success'] . '</div>';
+            unset($_SESSION['registration_success']);
+        }
         ?>
         <form action="" method="post">
             <div class="mb-3">
@@ -67,7 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <div class="d-flex">
+                <button type="submit" class="btn btn-primary me-2">Cadastrar</button>
+                <a href="dashboard_info.php" class="btn btn-secondary">Voltar</a>
+            </div>
         </form>
     </div>
 

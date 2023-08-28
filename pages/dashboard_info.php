@@ -6,9 +6,7 @@
     <title>Dashboard - Dashboard Bluepex</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f7f9fc;
         }
@@ -56,53 +54,52 @@ body {
         <div class="dashboard-header">
             <img class="dashboard-logo" src="https://suite.bluepex.com.br/public/images/logo-responsive.png" alt="Logo Bluepex">
             <h2>Dashboard Bluepex</h2>
-             <nav class="navbar navbar-expand-lg navbar-custom mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" ></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard_info.php">Gerenciamento de Usuários</a>
-                        </li>
-                    </ul>
+            <nav class="navbar navbar-expand-lg navbar-custom mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand"></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="dashboard.php">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="dashboard_info.php">Gerenciamento de Usuários</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
         </div>
-        <?php
-        session_start();
-        require_once '../config/db.php'; // Caminho para o arquivo de configuração do banco de dados
-
-        // Verificar se o usuário está logado
-        if (!isset($_SESSION['user_id'])) {
-            header("Location: login.php");
-            exit();
-        }
-
-        $user_id = $_SESSION['user_id'];
-
-        // Recuperar dados do usuário
-        $sql = "SELECT username FROM users WHERE id = :user_id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$user) {
-            die("Usuário não encontrado");
-        }
-        ?>
 
         <div class="user-list-container">
             <ul class="list-group">
                 <?php
+                session_start();
+                require_once '../config/db.php';
+
+                // Verificar se o usuário está logado
+                if (!isset($_SESSION['user_id'])) {
+                    header("Location: login.php");
+                    exit();
+                }
+
+                $user_id = $_SESSION['user_id'];
+
+                // Recuperar dados do usuário
+                $sql = "SELECT username FROM users WHERE id = :user_id";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(":user_id", $user_id);
+                $stmt->execute();
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$user) {
+                    die("Usuário não encontrado");
+                }
+
                 $sql = "SELECT id, username FROM users";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute();
@@ -134,7 +131,30 @@ body {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Seu script JavaScript existente aqui
+        document.addEventListener("DOMContentLoaded", function() {
+            const editButtons = document.querySelectorAll(".edit-button");
+            const deleteButtons = document.querySelectorAll(".delete-button");
+
+            editButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    const userId = this.getAttribute("data-id");
+                    window.location.href = "edit_user.php?id=" + userId;
+                });
+            });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    const userId = this.getAttribute("data-id");
+                    if (confirm("Tem certeza que deseja deletar este usuário?")) {
+                        fetch("delete_user.php?id=" + userId, {
+                            method: "POST"
+                        }).then(response => {
+                            window.location.reload();
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

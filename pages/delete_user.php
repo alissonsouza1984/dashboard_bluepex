@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Verificar se o ID do usuário está presente na URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: dashboard.php"); // Redirecionar de volta à página de dashboard
+    header("Location: dashboard_info.php"); // Redirecionar de volta à página de dashboard
     exit();
 }
 
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
     $deleteStmt->execute();
 
     // Redirecionar para a página de dashboard após a exclusão
-    header("Location: dashboard.php");
+    header("Location: dashboard_info.php");
     exit();
 }
 ?>
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
         <p>Você está prestes a excluir um usuário. Esta ação não pode ser desfeita. Deseja realmente prosseguir?</p>
         <form method="post">
             <button type="submit" name="confirm_delete" class="btn btn-danger">Confirmar Exclusão</button>
-            <a href="dashboard.php" class="btn btn-secondary">Cancelar</a>
+            <a href="dashboard_info.php" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 

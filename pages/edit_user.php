@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Verificar se o ID do usuário está presente na URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: dashboard.php"); // Redirecionar de volta à página de dashboard
+    header("Location: dashboard_info.php"); // Redirecionar de volta à página de gerenciamento de usuários
     exit();
 }
 
@@ -30,20 +30,50 @@ if (!$user) {
     die("Usuário não encontrado");
 }
 
+$errors = [];
+$successMessage = '';
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Capturar os campos do formulário de edição
     $newUsername = $_POST["new_username"];
+    $newPassword = $_POST["new_password"];
+    $newEmail = $_POST["new_email"];
 
-    // Atualizar as informações do usuário no banco de dados
-    $updateSql = "UPDATE users SET username = :username WHERE id = :id";
-    $updateStmt = $pdo->prepare($updateSql);
-    $updateStmt->bindParam(":username", $newUsername);
-    $updateStmt->bindParam(":id", $id);
-    $updateStmt->execute();
+    // Validações (você pode adicionar mais validações conforme necessário)
+    if (empty($newUsername)) {
+        $errors[] = "O nome de usuário não pode estar vazio";
+    }
 
-    // Redirecionar para a página de dashboard após a edição
-    header("Location: dashboard.php");
-    exit();
+    if (empty($newEmail)) {
+        $errors[] = "O email não pode estar vazio";
+    } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "O email é inválido";
+    }
+
+    if (count($errors) === 0) {
+        // Hash a nova senha antes de atualizar
+        if (!empty($newPassword)) {
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        }
+
+        // Atualizar as informações do usuário no banco de dados
+        $updateSql = "UPDATE users SET username = :username, ";
+        if (!empty($newPassword)) {
+            $updateSql .= "password = :password, ";
+        }
+        $updateSql .= "email = :email WHERE id = :id";
+        
+        $updateStmt = $pdo->prepare($updateSql);
+        $updateStmt->bindParam(":username", $newUsername);
+        if (!empty($newPassword)) {
+            $updateStmt->bindParam(":password", $hashedPassword);
+        }
+        $updateStmt->bindParam(":email", $newEmail);
+        $updateStmt->bindParam(":id", $id);
+        $updateStmt->execute();
+
+        $successMessage = "Alterações feitas com sucesso.";
+    }
 }
 ?>
 
@@ -58,13 +88,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
     <div class="container">
         <h2>Editar Usuário</h2>
+        <?php if ($successMessage): ?>
+            <div class="alert alert-success"><?php echo $successMessage; ?></div>
+            <script>
+                setTimeout(function() {
+                    window.location.href = "dashboard_info.php";
+                }, 2000); // Atraso de 2 segundos
+            </script>
+        <?php endif; ?>
+        <?php if (count($errors) > 0): ?>
+            <div class="alert alert-danger">
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <form action="" method="post">
             <div class="mb-3">
                 <label for="new_username" class="form-label">Novo Nome de Usuário</label>
                 <input type="text" class="form-control" id="new_username" name="new_username" value="<?php echo $user['username']; ?>" required>
             </div>
+            <div class="mb-3">
+                <label for="new_password" class="form-label">Nova Senha</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Deixe em branco para manter a senha atual">
+            </div>
+            <div class="mb-3">
+                <label for="new_email" class="form-label">Novo Email</label>
+                <input type="email" class="form-control" id="new_email" name="new_email" value="<?php echo $user['email']; ?>" required>
+            </div>
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <a href="dashboard.php" class="btn btn-secondary">Cancelar</a>
+            <a href="dashboard_info.php" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 </body>
