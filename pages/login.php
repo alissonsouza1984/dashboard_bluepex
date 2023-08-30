@@ -48,7 +48,7 @@
                 }
                 ?>
                 <div class="mt-3 text-center">
-                    <a href="cadastro.php">Cadastrar Usuário Novo</a> | <a href="#">Esqueceu a Senha</a>
+                    <a href="cadastro.php">Cadastrar Usuário Novo</a> | <a href="reset_password.php">Esqueceu a Senha</a>
                 </div>
             </div>
         </div>
