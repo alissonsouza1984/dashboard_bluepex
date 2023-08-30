@@ -107,13 +107,13 @@
 
                 if ($users) {
                     foreach ($users as $user) {
-                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                        echo '<span>' . $user['username'] . '</span>';
-                        echo '<div>';
-                        echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $user['id'] . '">Editar</button>';
-                        echo '<button class="btn btn-sm btn-outline-danger delete-button" data-id="' . $user['id'] . '">Deletar</button>';
-                        echo '</div>';
-                        echo '</li>';
+                       echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                       echo '<span>' . $user['username'] . '</span>';
+                       echo '<div>';
+                       echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $user['id'] . '">Editar</button>';
+                       echo '<button class="btn btn-sm btn-outline-danger delete-button" data-id="' . $user['id'] . '">Deletar</button>';
+                       echo '</div>';
+                       echo '</li>';
                     }
                 } else {
                     echo '<li class="list-group-item">Nenhum usuário encontrado.</li>';
@@ -126,35 +126,41 @@
         </div>
         <div class="dashboard-logout mt-3">
             <a href="logout.php" class="btn btn-primary logout-button">Sair</a>
+            <a href="dashboard.php" class="btn btn-primary logout-button">Voltar</a>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const editButtons = document.querySelectorAll(".edit-button");
-            const deleteButtons = document.querySelectorAll(".delete-button");
+        const editButtons = document.querySelectorAll(".edit-button");
+        const deleteButtons = document.querySelectorAll(".delete-button");
 
-            editButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    const userId = this.getAttribute("data-id");
-                    window.location.href = "edit_user.php?id=" + userId;
-                });
-            });
-
-            deleteButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    const userId = this.getAttribute("data-id");
-                    if (confirm("Tem certeza que deseja deletar este usuário?")) {
-                        fetch("delete_user.php?id=" + userId, {
-                            method: "POST"
-                        }).then(response => {
-                            window.location.reload();
-                        });
-                    }
-                });
+        editButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const userId = this.getAttribute("data-id");
+                // Redirecione para a página de edição, passando o ID do usuário
+                window.location.href = "edit_user.php?id=" + userId;
             });
         });
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const userId = this.getAttribute("data-id");
+                if (confirm("Tem certeza que deseja deletar este usuário?")) {
+                    // Faça uma requisição AJAX para o script de deleção
+                    fetch("delete_user.php?id=" + userId, {
+                        method: "POST"
+                    }).then(response => {
+                        // Recarregue a página após a deleção
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>
+<script>
+

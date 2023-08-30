@@ -219,46 +219,8 @@
     updateAllUsage();
     setInterval(updateAllUsage, 500); // Atualiza a cada 5 segundos
 
-    // Adiciona o comportamento para mostrar/ocultar a lista de usuários
-    document.getElementById("toggleUserList").addEventListener("click", function() {
-        var userList = document.getElementById("userList");
-        if (userList.style.display === "none") {
-            userList.style.display = "block";
-            this.textContent = "Esconder Usuários Cadastrados";
-        } else {
-            userList.style.display = "none";
-            this.textContent = "Mostrar Usuários Cadastrados ";
-        }
-    });
+    
 </script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".edit-button");
-        const deleteButtons = document.querySelectorAll(".delete-button");
 
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const userId = this.getAttribute("data-id");
-                // Redirecione para a página de edição, passando o ID do usuário
-                window.location.href = "edit_user.php?id=" + userId;
-            });
-        });
-
-        deleteButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const userId = this.getAttribute("data-id");
-                if (confirm("Tem certeza que deseja deletar este usuário?")) {
-                    // Faça uma requisição AJAX para o script de deleção
-                    fetch("delete_user.php?id=" + userId, {
-                        method: "POST"
-                    }).then(response => {
-                        // Recarregue a página após a deleção
-                        window.location.reload();
-                    });
-                }
-            });
-        });
-    });
-</script>
 </body>
 </html
