@@ -1,14 +1,14 @@
-# dashboard_bluepex
+# dashboard_linux
 O projeto a seguir tem como objetivo Desenvolver um sistema com dashboard de status do sistema Operacional Linux
 
 # Antes de Iniciar é necessario criar o banco de dados  para vias de teste foi criado  o usuario alisson com a senha pokas
 sudo mysql -u alisson -p
 
-# Criando o Banco de dados dashboard_bluepex no Mysql;
-CREATE DATABASE dashboard_bluepex;
+# Criando o Banco de dados dashboard_linux no Mysql;
+CREATE DATABASE dashboard_linux;
 
 # Criando Tabelas no Mysql
-USE dashboard_bluepex;
+USE dashboard_linux;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,6 +25,14 @@ CREATE TABLE sessions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+#Dar Permissões ao usuario no banco de dados
+
+GRANT ALL PRIVILEGES ON *.* TO 'alisson'@'localhost';
+
+FLUSH PRIVILEGES;
+
+
 
 
 #definir usuario admin no banco de dados

@@ -38,7 +38,7 @@
 <body>
     <div class="reset-password-card">
         <div class="reset-password-logo">
-            <img src="https://suite.bluepex.com.br/public/images/logo-responsive.png" alt="Logo Bluepex">
+            <img src="https://icon-library.com/images/linux-server-icon/linux-server-icon-17.jpg" alt="Logo Bluepex">
             <h2 class="mt-3">Redefinir Senha</h2>
         </div>
         <form action="reset_password_process.php" method="post">

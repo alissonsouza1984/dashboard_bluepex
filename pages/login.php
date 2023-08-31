@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Dashboard Bluepex</title>
+    <title>Login - Dashboard Linux</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .login-container {
@@ -27,9 +27,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="login-logo">
-                    <img src="https://suite.bluepex.com.br/public/images/logo-responsive.png" alt="Logo Bluepex">
-                    <h2>Dashboard Bluepex</h2>
-                    <p class="text-muted">Bem-vindo ao Dashboard Bluepex</p>
+                    <img src="https://icon-library.com/images/linux-server-icon/linux-server-icon-17.jpg" alt="Logo Linux">
+                    <h2>Dashboard Linux</h2>
+                    <p class="text-muted">Bem-vindo ao Dashboard Linux</p>
                 </div>
                 <form action="../includes/scripts/login_process.php" method="post">
                     <div class="mb-3">

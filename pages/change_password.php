@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alterar Senha - Dashboard Bluepex</title>
+    <title>Alterar Senha - Dashboard Linux</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -38,7 +38,7 @@
 <body>
     <div class="change-password-card">
         <div class="change-password-logo">
-            <img src="https://suite.bluepex.com.br/public/images/logo-responsive.png" alt="Logo Bluepex">
+            <img src="https://icon-library.com/images/linux-server-icon/linux-server-icon-17.jpg" alt="Logo Linux">
             <h2 class="mt-3">Alterar Senha</h2>
         </div>
         <?php

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Banco de Dados - Dashboard Bluepex</title>
+    <title>Criar Banco de Dados - Dashboard Linux</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -13,7 +13,7 @@
         $host = 'localhost';
         $dbUser = '';
         $dbPassword = '';
-        $dbName = 'dashboard_bluepex';
+        $dbName = 'dashboard_linux';
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $dbUser = $_POST["dbUser"];

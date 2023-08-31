@@ -1,8 +1,8 @@
 <?php
 $host = "localhost"; // Endereço do servidor MySQL (normalmente "localhost")
-$dbname = "dashboard_bluepex"; // Nome do banco de dados
-$username = "alisson"; // Usuário do MySQL
-$password = "pokas"; // Senha do MySQL
+$dbname = "dashboard_linux"; // Nome do banco de dados
+$username = "dashboard_linux"; // Usuário do MySQL
+$password = "nt2rtnBrSrAT2wxZ"; // Senha do MySQL
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

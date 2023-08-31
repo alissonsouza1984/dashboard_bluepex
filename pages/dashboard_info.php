@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Dashboard Bluepex</title>
+    <title>Dashboard Linux</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -52,8 +52,8 @@
 <body>
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <img class="dashboard-logo" src="https://suite.bluepex.com.br/public/images/logo-responsive.png" alt="Logo Bluepex">
-            <h2>Dashboard Bluepex</h2>
+            <img class="dashboard-logo" src="https://icon-library.com/images/linux-server-icon/linux-server-icon-17.jpg" alt="Logo Linux">
+            <h2>Dashboard Linux</h2>
             <nav class="navbar navbar-expand-lg navbar-custom mb-3">
                 <div class="container-fluid">
                     <a class="navbar-brand"></a>
