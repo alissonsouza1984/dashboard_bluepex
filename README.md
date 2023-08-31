@@ -1,8 +1,11 @@
 # dashboard_linux
 O projeto a seguir tem como objetivo Desenvolver um sistema com dashboard de status do sistema Operacional Linux
 
-# Antes de Iniciar é necessario criar o banco de dados  para vias de teste foi criado  o usuario alisson com a senha pokas
-sudo mysql -u alisson -p
+# Banco de dados 
+mysql -u root -psua_senha
+
+Antes de Iniciar é necessario criar o banco de dados No mysql 
+editar o arquivo config/db.php
 
 # Criando o Banco de dados dashboard_linux no Mysql;
 CREATE DATABASE dashboard_linux;
@@ -28,12 +31,9 @@ CREATE TABLE sessions (
 
 #Dar Permissões ao usuario no banco de dados
 
-GRANT ALL PRIVILEGES ON *.* TO 'alisson'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'dashboard_linux'@'localhost';
 
 FLUSH PRIVILEGES;
-
-
-
 
 #definir usuario admin no banco de dados
 INSERT INTO users (username, password, is_admin, email) VALUES ('admin', '$2y$10$8aHHdVZvppjNYWV80MIwu.BiFGjQ1J5N7OB5LZw3Cy.KKTPOtFFuO', 1, 'admin@example.com');
