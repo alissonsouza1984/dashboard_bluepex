@@ -25,7 +25,17 @@ $deleteStmt = $pdo->prepare($deleteSql);
 $deleteStmt->bindParam(":id", $id);
 $deleteStmt->execute();
 
-// Redirecionar para a página de dashboard após a exclusão
-header("Location: dashboard_info.php");
-exit();
+// Verificar se o usuário excluído é o mesmo que está logado
+if ($id === $user_id) {
+    // O usuário atual foi excluído, redirecionar para a página de login
+    session_destroy(); // Encerrar a sessão do usuário
+    header("Location: login.php");
+    exit();
+} else {
+    // Redirecionar de volta para a página de dashboard
+    header("Location: dashboard_info.php");
+    exit();
+}
 ?>
+
+
