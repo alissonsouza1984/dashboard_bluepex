@@ -34,11 +34,11 @@
                 <form action="../includes/scripts/login_process.php" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Nome de Usuário</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input placeholder="Digite seu Usuário" type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input placeholder="Digite sua senha" type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>

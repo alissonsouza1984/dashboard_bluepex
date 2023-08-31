@@ -20,8 +20,6 @@ if (!$user) {
     die("Usuário não encontrado");
 }
 
-// Aqui você pode adicionar a lógica para adicionar, editar ou excluir usuários
-// ...
 
 ?>
 

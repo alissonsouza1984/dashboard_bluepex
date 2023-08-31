@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-     /* Estilos para a barra de navegação */
+     
         .navbar-custom {
             background-color: #0D6EFD; /* Cor azul do botão Sair */
         }
