@@ -17,7 +17,12 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $user_id = $_SESSION['user_id'];
 $id = $_GET['id'];
 
-// Verificar se o usuário tem permissão para editar este usuário (você pode adicionar suas próprias verificações aqui)
+// Verificar se o usuário é um administrador
+$sqlCheckAdmin = "SELECT is_admin FROM users WHERE id = :user_id";
+$stmtCheckAdmin = $pdo->prepare($sqlCheckAdmin);
+$stmtCheckAdmin->bindParam(":user_id", $user_id);
+$stmtCheckAdmin->execute();
+$currentUser = $stmtCheckAdmin->fetch(PDO::FETCH_ASSOC);
 
 // Recuperar informações do usuário para pré-preencher o formulário
 $sql = "SELECT * FROM users WHERE id = :id";
@@ -38,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $newUsername = $_POST["new_username"];
     $newPassword = $_POST["new_password"];
     $newEmail = $_POST["new_email"];
+    $isAdmin = isset($_POST["is_admin"]) ? 1 : 0; // Verificar se o administrador foi marcado
 
     // Validações (você pode adicionar mais validações conforme necessário)
     if (empty($newUsername)) {
@@ -50,29 +56,61 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $errors[] = "O email é inválido";
     }
 
-    if (count($errors) === 0) {
-        // Hash a nova senha antes de atualizar
-        if (!empty($newPassword)) {
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        }
+    if ($user_id === $user['id'] || $currentUser['is_admin'] === '1') {
+        // Se o usuário atual estiver editando a si mesmo ou for um administrador,
+        // permitir a alteração da permissão de administrador
+        if (count($errors) === 0) {
+            // Hash a nova senha antes de atualizar
+            if (!empty($newPassword)) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            }
 
-        // Atualizar as informações do usuário no banco de dados
-        $updateSql = "UPDATE users SET username = :username, ";
-        if (!empty($newPassword)) {
-            $updateSql .= "password = :password, ";
-        }
-        $updateSql .= "email = :email WHERE id = :id";
-        
-        $updateStmt = $pdo->prepare($updateSql);
-        $updateStmt->bindParam(":username", $newUsername);
-        if (!empty($newPassword)) {
-            $updateStmt->bindParam(":password", $hashedPassword);
-        }
-        $updateStmt->bindParam(":email", $newEmail);
-        $updateStmt->bindParam(":id", $id);
-        $updateStmt->execute();
+            // Atualizar as informações do usuário no banco de dados, incluindo a flag de administrador
+            $updateSql = "UPDATE users SET username = :username, ";
+            if (!empty($newPassword)) {
+                $updateSql .= "password = :password, ";
+            }
+            $updateSql .= "email = :email, is_admin = :is_admin WHERE id = :id";
 
-        $successMessage = "Alterações feitas com sucesso.";
+            $updateStmt = $pdo->prepare($updateSql);
+            $updateStmt->bindParam(":username", $newUsername);
+            if (!empty($newPassword)) {
+                $updateStmt->bindParam(":password", $hashedPassword);
+            }
+            $updateStmt->bindParam(":email", $newEmail);
+            $updateStmt->bindParam(":is_admin", $isAdmin);
+            $updateStmt->bindParam(":id", $id);
+            $updateStmt->execute();
+
+            $successMessage = "Alterações feitas com sucesso.";
+        }
+    } else {
+        // Se o usuário atual não tiver permissão para alterar a permissão de administrador,
+        // atualize apenas as informações do usuário, excluindo a flag de administrador
+        if (count($errors) === 0) {
+            // Hash a nova senha antes de atualizar
+            if (!empty($newPassword)) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            }
+
+            // Atualizar as informações do usuário no banco de dados, excluindo a flag de administrador
+            $updateSql = "UPDATE users SET username = :username, ";
+            if (!empty($newPassword)) {
+                $updateSql .= "password = :password, ";
+            }
+            $updateSql .= "email = :email WHERE id = :id";
+
+            $updateStmt = $pdo->prepare($updateSql);
+            $updateStmt->bindParam(":username", $newUsername);
+            if (!empty($newPassword)) {
+                $updateStmt->bindParam(":password", $hashedPassword);
+            }
+            $updateStmt->bindParam(":email", $newEmail);
+            $updateStmt->bindParam(":id", $id);
+            $updateStmt->execute();
+
+            $successMessage = "Alterações feitas com sucesso.";
+        }
     }
 }
 ?>
@@ -118,6 +156,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="new_email" class="form-label">Novo Email</label>
                 <input type="email" class="form-control" id="new_email" name="new_email" value="<?php echo $user['email']; ?>" required>
             </div>
+            <!-- Não permitir que o usuário atual selecione a flag "administrador" -->
+            <?php if ($user_id !== $user['id'] || $currentUser['is_admin'] === '1'): ?>
+                <div class="mb-3">
+                    <input type="checkbox" id="is_admin" name="is_admin" <?php if ($user['is_admin'] === '1') { echo 'checked'; } ?>>
+                    <label for="is_admin">É Administrador</label>
+                </div>
+            <?php endif; ?>
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
             <a href="dashboard_info.php" class="btn btn-secondary">Cancelar</a>
         </form>

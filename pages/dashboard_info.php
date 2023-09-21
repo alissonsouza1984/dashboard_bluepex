@@ -1,3 +1,33 @@
+<?php
+session_start();
+require_once '../config/db.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Recuperar dados do usuário
+$sql = "SELECT username, is_admin FROM users WHERE id = :user_id";
+$stmt = $pdo->prepare($sql);
+$stmt->bindParam(":user_id", $user_id);
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    die("Usuário não encontrado");
+}
+
+$sql = "SELECT id, username, is_admin FROM users";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,42 +108,24 @@
         <div class="user-list-container">
             <ul class="list-group">
                 <?php
-                session_start();
-                require_once '../config/db.php';
-
-                // Verificar se o usuário está logado
-                if (!isset($_SESSION['user_id'])) {
-                    header("Location: login.php");
-                    exit();
-                }
-
-                $user_id = $_SESSION['user_id'];
-
-                // Recuperar dados do usuário
-                $sql = "SELECT username FROM users WHERE id = :user_id";
-                $stmt = $pdo->prepare($sql);
-                $stmt->bindParam(":user_id", $user_id);
-                $stmt->execute();
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!$user) {
-                    die("Usuário não encontrado");
-                }
-
-                $sql = "SELECT id, username FROM users";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute();
-                $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                 if ($users) {
-                    foreach ($users as $user) {
-                       echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                       echo '<span>' . $user['username'] . '</span>';
-                       echo '<div>';
-                       echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $user['id'] . '">Editar</button>';
-                       echo '<button class="btn btn-sm btn-outline-danger delete-button" data-id="' . $user['id'] . '">Deletar</button>';
-                       echo '</div>';
-                       echo '</li>';
+                    foreach ($users as $otherUser) {
+                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                        echo '<span>' . $otherUser['username'] . '</span>';
+                        echo '<div>';
+                        
+                        // Verifica se o usuário logado é administrador
+                        if ($user['is_admin'] == 1) {
+                            // Se o usuário logado for administrador, exibe os botões Editar e Deletar para todos os usuários
+                            echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $otherUser['id'] . '">Editar</button>';
+                            echo '<button class="btn btn-sm btn-outline-danger delete-button" data-id="' . $otherUser['id'] . '">Deletar</button>';
+                        } else if ($otherUser['id'] == $user_id) {
+                            // Se o usuário logado não for administrador e o usuário atual for ele mesmo, exibe o botão Editar apenas para si próprio
+                            echo '<button class="btn btn-sm btn-outline-primary edit-button" data-id="' . $otherUser['id'] . '">Editar</button>';
+                        }
+                        
+                        echo '</div>';
+                        echo '</li>';
                     }
                 } else {
                     echo '<li class="list-group-item">Nenhum usuário encontrado.</li>';
@@ -121,7 +133,10 @@
                 ?>
             </ul>
             <div class="mt-3">
-                <a href="register_user.php" class="btn btn-success register-button">Cadastrar Novo Usuário</a>
+                <!-- Apenas usuários administradores podem ver o botão "Cadastrar Novo Usuário" -->
+                <?php if ($user['is_admin'] == 1): ?>
+                    <a href="register_user.php" class="btn btn-success register-button">Cadastrar Novo Usuário</a>
+                <?php endif; ?>
             </div>
         </div>
         <div class="dashboard-logout mt-3">
@@ -129,6 +144,10 @@
             <a href="dashboard.php" class="btn btn-primary logout-button">Voltar</a>
         </div>
     </div>
+
+    <!-- ... (seu código JavaScript) ... -->
+</body>
+</html>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -162,5 +181,3 @@
     </script>
 </body>
 </html>
-<script>
-
